@@ -14,9 +14,9 @@ function McdGenerator() {
                 'Content-Type': 'application/json',
             }
         }).then((res) => {
-            console.log(res);
+            console.log(res.data);
             setMcdUid(res.data);
-            localStorage.setItem('mcd_uid', mcd_uid);
+            localStorage.setItem('mcd_uid', res.data);
         }).catch(error => {
 
         })
