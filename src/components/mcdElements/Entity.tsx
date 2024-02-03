@@ -1,26 +1,17 @@
 import axios from "axios";
 import { useState } from "react";
-function Entity(props){
+function Entity(props) {
 
-    const [name,setName]=useState("");
-    axios.get("http://localhost:8080/getEntityById/"+props.id, {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(res => {
-            setName(res.data.name);
-            console.log(res.data);
-        })
 
-    return(
+    return (
         <>
-         {props.name} 
-        <hr/>
-        <div className="row">
-            <div className="col">
-                Attribue
+            {props.name}
+            <hr />
+            <div className="row">
+                <div className="col">
+                    Attribue
+                </div>
             </div>
-        </div>
         </>
     )
 }
