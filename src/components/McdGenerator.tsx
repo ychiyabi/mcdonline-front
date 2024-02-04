@@ -3,16 +3,19 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import interact from 'interactjs';
 import Entity from "./mcdElements/Entity";
+import Relation from './mcdElements/Relation';
 
 function McdGenerator() {
 
 
     const [mcd_name, setMcdName] = useState("");
+    const [relation_name, setRelationName] = useState("");
     const [mcd_uid, setMcdUid] = useState("");
     const [entity_name, setEntityName] = useState("");
     const [entity_id, setEntityId] = useState("");
     const position = { x: 0, y: 0 }
     const [entites, setEntites] = useState([]);
+    let test = document.getElementById('line');
 
     const generateMcd = (mcd_nom) => {
         setMcdName(mcd_nom);
@@ -47,11 +50,82 @@ function McdGenerator() {
         })
     }
 
+    const createRelation = (name: string, entity_one: string, entity_two: string, card_one: string, card_two: string) => {
+        var data = new FormData();
+        data.append('name', name);
+        data.append('entity_one', entity_one);
+        data.append('entity_two', entity_two);
+        data.append('car_one', card_one);
+        data.append('car_two', card_two);
+        axios.post("http://localhost:8080/insertRelation", data, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(res => {
+            console.log(res.data);
+        })
+    }
+
+    const handleChangeRelationName = (e) => {
+        setRelationName(e.target.value);
+    }
+
+    const createRelationDialog = () => {
+        var entitesString = "";
+        entites.forEach(element => {
+            entitesString += "<option value='" + element.id + "'>" + element.name + "</option>";
+            console.log(element);
+        });
+        Swal.fire({
+            title: 'Création relation',
+            width: 950,
+            html: `
+            <div class="d-flex flex-row w-50 my-4 mx-auto">
+                <label class="w-50 mt-2">Nom de la relation</label>
+                <input type="text" class="form-control w-50" id="relationName"/>
+                </div>
+            <div class="row my-4">
+            <div class="col"><label class="mt-2">Cardinalité Entité une</label></div>
+            <div class="col"><select id="cardOne" class="form-select"><option value="1,1">1,1</option><option>1,n</option><option>0,n</option></select></div>
+            <div class="col"><label class="mt-2">Enité une</label></div>    
+            <div class="col"><select id="entiteOne" class="form-select">`+ entitesString + `</select></div>
+                </div>
+                <div class="row my-4">
+            <div class="col"><label class="mt-2">Cardinalité Entité deux</label></div>
+            <div class="col"><select id="cardTwo" class="form-select"><option value="1,1">1,1</option><option>1,n</option><option>0,n</option></select></div>
+            <div class="col"><label class="mt-2">Enité deux</label></div>    
+            <div class="col"><select id="entiteTwo" class="form-select">`+ entitesString + `</select></div>
+                </div>
+            </div>`,
+            showCancelButton: true,
+            confirmButtonText: 'Créer',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var relation = document.getElementById('relationName').value;
+                var entity_one = document.getElementById('entiteOne').value;
+                var entity_two = document.getElementById('entiteTwo').value;
+                var card_one = document.getElementById('cardOne').value;
+                var card_two = document.getElementById('cardTwo').value;
+                createRelation(relation, entity_one, entity_two, card_one, card_two);
+                Swal.fire({
+                    title: "La relation a été créé avec succès",
+                    text: "Relation " + relation + "Créer",
+                    icon: "success"
+                });
+
+                getEntitesByMcd();
+
+            }
+        });
+
+    }
+
     const getEntitesByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
         axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd).then(res => {
             console.log(res.data);
             setEntites(res.data);
+
         })
     }
 
@@ -101,6 +175,7 @@ function McdGenerator() {
             ],
             listeners: {
                 start(event) {
+
                     console.log(event.type, event.target)
                     console.log(event.target.style.transform);
                     const matrix = new DOMMatrix(event.target.style.transform);
@@ -114,7 +189,9 @@ function McdGenerator() {
 
 
                     event.target.style.transform =
-                        `translate(${position.x}px, ${position.y}px)`
+                        `translate(${position.x}px, ${position.y}px)`;
+                    test.style.transform = `translate(${position.x}px, ${position.y}px)`;
+
                 },
                 onend: () => {
                     // Handle drag end if needed
@@ -126,6 +203,7 @@ function McdGenerator() {
 
     return (
         <>
+
             <div className="container-fluid w-50 mx-auto mt-5">
 
 
@@ -144,7 +222,7 @@ function McdGenerator() {
                         <h5 className="card-title">{mcd_name}</h5>
                         <div className="d-flex flex-row">
                             <a href="#" className="btn btn-info mx-2" onClick={generateEntityDialog}>Entité</a>
-                            <a href="#" className="btn btn-primary mx-2">Relation</a>
+                            <a href="#" className="btn btn-primary mx-2" onClick={createRelationDialog}>Relation</a>
                         </div>
 
                     </div>
@@ -153,9 +231,23 @@ function McdGenerator() {
                 <div className="card-body">
 
                     {entites.map((item) => (
-                        <div className="draggable" key={item.id}>
-                            <Entity name={item.name} />
-                        </div>
+                        <>
+                            {console.log(item.relations.name)}
+
+                            <div className="draggable" key={item.id}>
+                                <Entity name={item.name} />
+                            </div>
+                            {item.relations.map((relationship) => (
+                                <>
+                                    <div className="draggable" key={relationship.id}>
+                                        <Relation name={relationship.name} />
+
+                                    </div>
+                                    <svg id="line"><line x1="20" y1="20" x2="250" y2="150" stroke="black" /></svg>
+                                </>
+                            ))}
+
+                        </>
                     ))}
 
                 </div>
