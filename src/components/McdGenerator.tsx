@@ -165,12 +165,7 @@ function McdGenerator() {
         }
     }
 
-    const calculateCenter = (div) => {
-        var rect = div.getBoundingClientRect();
-        var centerX = rect.left + rect.width / 2;
-        var centerY = rect.top + rect.height / 2;
-        return { x: centerX, y: centerY };
-    }
+
 
     const organiserMcd = () => {
         entites.forEach(element => {
@@ -208,13 +203,15 @@ function McdGenerator() {
 
                 },
                 move(event) {
-                    position.x += event.dx;
-                    position.y += event.dy;
+                    const target = event.target;
+                    const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+                    const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
 
-                    organiserMcd();
-                    event.target.style.transform =
-                        `translate(${position.x}px, ${position.y}px)`;
+                    target.style.transform = `translate(${x}px, ${y}px)`;
+                    target.setAttribute("data-x", x);
+                    target.setAttribute("data-y", y);
 
+                    updateLinePosition(24, 103);
 
 
 
@@ -224,6 +221,63 @@ function McdGenerator() {
                 },
             }
         });
+
+
+        const updateLinePosition = (id_relation, id_entity) => {
+            const entity1Rect = document.getElementById('relation-' + id_relation).current.getBoundingClientRect();
+            const entity2Rect = document.getElementById('entity-' + id_entity).current.getBoundingClientRect();
+            const line = document.getElementById("line-" + id_entity + "-" + id_entity);
+
+            const entity1CenterX = entity1Rect.left + entity1Rect.width / 2;
+            const entity1CenterY = entity1Rect.top + entity1Rect.height / 2;
+            const entity2CenterX = entity2Rect.left + entity2Rect.width / 2;
+            const entity2CenterY = entity2Rect.top + entity2Rect.height / 2;
+
+            const dx = entity2CenterX - entity1CenterX;
+            const dy = entity2CenterY - entity1CenterY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+            // Adjust the line position to touch the edges of the entities
+            let entity1EdgeX = entity1CenterX;
+            let entity1EdgeY = entity1CenterY;
+            let entity2EdgeX = entity2CenterX;
+            let entity2EdgeY = entity2CenterY;
+
+            // Check if the line touches both entities
+            const lineTouchesEntity1 = isLineTouchingEntity(entity1CenterX, entity1CenterY, entity1Rect.width, entity1Rect.height, entity2CenterX, entity2CenterY, line);
+            const lineTouchesEntity2 = isLineTouchingEntity(entity2CenterX, entity2CenterY, entity2Rect.width, entity2Rect.height, entity1CenterX, entity1CenterY, line);
+
+            if (!lineTouchesEntity1 && !lineTouchesEntity2) {
+                // Move the entities closer together
+                const newDistance = Math.min(entity1Rect.width / 2 + entity2Rect.width / 2, entity1Rect.height / 2 + entity2Rect.height / 2);
+                const newDx = dx * newDistance / distance;
+                const newDy = dy * newDistance / distance;
+                entity1EdgeX += newDx / 2;
+                entity1EdgeY += newDy / 2;
+                entity2EdgeX -= newDx / 2;
+                entity2EdgeY -= newDy / 2;
+            }
+
+            line.style.width = `${distance}px`;
+            line.style.transform = `rotate(${angle}deg)`;
+            line.style.left = `${entity1EdgeX}px`;
+            line.style.top = `${entity1EdgeY - 50}px`;
+        };
+
+        const isLineTouchingEntity = (entityCenterX, entityCenterY, entityWidth, entityHeight, lineX, lineY, line) => {
+            const entityLeft = entityCenterX - entityWidth / 2;
+            const entityRight = entityCenterX + entityWidth / 2;
+            const entityTop = entityCenterY - entityHeight / 2;
+            const entityBottom = entityCenterY + entityHeight / 2;
+
+            const lineLeft = Math.min(entityLeft, entityRight);
+            const lineRight = Math.max(entityLeft, entityRight);
+            const lineTop = Math.min(entityTop, entityBottom);
+            const lineBottom = Math.max(entityTop, entityBottom);
+
+            return lineX >= lineLeft && lineX <= lineRight && lineY >= lineTop && lineY <= lineBottom;
+        };
 
     }, []);
 
@@ -270,7 +324,16 @@ function McdGenerator() {
                                         <Relation name={relationship.name} />
 
                                     </div>
-                                    <svg className='svgContainer'><line id={"line-" + item.id + "-" + relationship.id} x1="3" y1="20" x2="30" y2="50" stroke="black" /></svg >
+                                    <div
+                                        id={"line-" + item.id + "-" + relationship.id}
+                                        style={{
+                                            position: "absolute",
+                                            height: "2px",
+                                            backgroundColor: "black",
+                                            transformOrigin: "left center",
+                                            zIndex: -1,
+                                        }}
+                                    ></div>
                                 </>
                             ))}
 

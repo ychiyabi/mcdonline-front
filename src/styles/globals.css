@@ -29,8 +29,9 @@ body{
 
 .flexible-line {
   position: absolute;
-  border-top: 30px solid black;
+  border-top: 10px solid black;
   width: 100px; /* Initial width */
   height: 2px; /* Initial height */
   transform-origin: 0 0; /* Set origin to top-left corner */
+  margin-left:50px;
 }

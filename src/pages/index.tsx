@@ -5,7 +5,7 @@ import styles from "@/styles/Home.module.css";
 import McdGenerator from "@/components/McdGenerator";
 import EntityGenerator from "@/components/EntityGenerator";
 import Navbar from "@/components/Navbar";
-import FlexibleLine from '@/components/FlexibleLine';
+import EntityRelationship from "@/components/EntityRelationship";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,19 +18,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <FlexibleLine onPositionChange={handleLinePositionChange} />
-      <div
-        style={{
-          position: 'absolute',
-          left: `${divPosition.x}px`,
-          top: `${divPosition.y}px`,
-          width: '50px',
-          height: '50px',
-          backgroundColor: 'red',
-        }}
-      >
-        {/* Your content */}
-      </div>
+      <EntityRelationship />
       <McdGenerator />
       {/* <EntityGenerator /> */}
     </>
