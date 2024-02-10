@@ -18,3 +18,19 @@ body{
   background-color: #00c292 !important;
   color:white !important;
 }
+.svgContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.flexible-line {
+  position: absolute;
+  border-top: 30px solid black;
+  width: 100px; /* Initial width */
+  height: 2px; /* Initial height */
+  transform-origin: 0 0; /* Set origin to top-left corner */
+}

@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import interact from 'interactjs';
 import Entity from "./mcdElements/Entity";
 import Relation from './mcdElements/Relation';
+import style from '@/styles/Home.module.css';
 
 function McdGenerator() {
 
@@ -15,7 +16,6 @@ function McdGenerator() {
     const [entity_id, setEntityId] = useState("");
     const position = { x: 0, y: 0 }
     const [entites, setEntites] = useState([]);
-    let test = document.getElementById('line');
 
     const generateMcd = (mcd_nom) => {
         setMcdName(mcd_nom);
@@ -125,6 +125,7 @@ function McdGenerator() {
         axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd).then(res => {
             console.log(res.data);
             setEntites(res.data);
+            organiserMcd();
 
         })
     }
@@ -164,6 +165,29 @@ function McdGenerator() {
         }
     }
 
+    const calculateCenter = (div) => {
+        var rect = div.getBoundingClientRect();
+        var centerX = rect.left + rect.width / 2;
+        var centerY = rect.top + rect.height / 2;
+        return { x: centerX, y: centerY };
+    }
+
+    const organiserMcd = () => {
+        entites.forEach(element => {
+            element.relations.forEach(relation => {
+                var rel = calculateCenter(document.getElementById('relation-' + relation.id));
+                var ent = calculateCenter(document.getElementById('entity-' + element.id));
+                var line = document.getElementById("line-" + element.id + "-" + relation.id);
+                line.setAttribute("x1", ent.x);
+                line.setAttribute("y1", ent.y);
+                line.setAttribute("x2", rel.x);
+                line.setAttribute("y2", rel.y);
+                console.log(line);
+
+            });
+        })
+    }
+
     useEffect(() => {
         interact('.draggable').draggable({
             inertia: true,
@@ -184,20 +208,23 @@ function McdGenerator() {
 
                 },
                 move(event) {
-                    position.x += event.dx
-                    position.y += event.dy
+                    position.x += event.dx;
+                    position.y += event.dy;
 
-
+                    organiserMcd();
                     event.target.style.transform =
                         `translate(${position.x}px, ${position.y}px)`;
-                    test.style.transform = `translate(${position.x}px, ${position.y}px)`;
+
+
+
 
                 },
                 onend: () => {
-                    // Handle drag end if needed
+
                 },
             }
-        })
+        });
+
     }, []);
 
 
@@ -234,16 +261,16 @@ function McdGenerator() {
                         <>
                             {console.log(item.relations.name)}
 
-                            <div className="draggable" key={item.id}>
+                            <div className="draggable" key={item.id} id={'entity-' + item.id}>
                                 <Entity name={item.name} />
                             </div>
                             {item.relations.map((relationship) => (
                                 <>
-                                    <div className="draggable" key={relationship.id}>
+                                    <div className="draggable" key={relationship.id} id={'relation-' + relationship.id}>
                                         <Relation name={relationship.name} />
 
                                     </div>
-                                    <svg id="line"><line x1="20" y1="20" x2="250" y2="150" stroke="black" /></svg>
+                                    <svg className='svgContainer'><line id={"line-" + item.id + "-" + relationship.id} x1="3" y1="20" x2="30" y2="50" stroke="black" /></svg >
                                 </>
                             ))}
 
@@ -251,7 +278,7 @@ function McdGenerator() {
                     ))}
 
                 </div>
-            </div>
+            </div >
 
 
 
