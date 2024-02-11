@@ -1,4 +1,7 @@
-.draggable {
+.draggableEntity {
+
+}
+.draggableRelation {
   width: 25%;
   min-height: 6.5em;
   margin: 1rem 0 0 1rem;

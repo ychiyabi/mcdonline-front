@@ -125,7 +125,6 @@ function McdGenerator() {
         axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd).then(res => {
             console.log(res.data);
             setEntites(res.data);
-            organiserMcd();
 
         })
     }
@@ -167,24 +166,8 @@ function McdGenerator() {
 
 
 
-    const organiserMcd = () => {
-        entites.forEach(element => {
-            element.relations.forEach(relation => {
-                var rel = calculateCenter(document.getElementById('relation-' + relation.id));
-                var ent = calculateCenter(document.getElementById('entity-' + element.id));
-                var line = document.getElementById("line-" + element.id + "-" + relation.id);
-                line.setAttribute("x1", ent.x);
-                line.setAttribute("y1", ent.y);
-                line.setAttribute("x2", rel.x);
-                line.setAttribute("y2", rel.y);
-                console.log(line);
-
-            });
-        })
-    }
-
     useEffect(() => {
-        interact('.draggable').draggable({
+        interact('.draggableEntity').draggable({
             inertia: true,
             modifiers: [
                 interact.modifiers.restrictRect({
@@ -211,7 +194,19 @@ function McdGenerator() {
                     target.setAttribute("data-x", x);
                     target.setAttribute("data-y", y);
 
-                    updateLinePosition(24, 103);
+                    var myentity = target;
+                    var selector = `[data-entityone="${target.getAttribute('data-myid')}"]`;
+                    var element = document.querySelector(selector);
+                    if (element == null) {
+                        var selector = `[data-entitytwo="${target.getAttribute('data-myid')}"]`;
+                        var element = document.querySelector(selector);
+                    }
+
+                    console.log(target.getAttribute('data-myid'));
+                    var myrelation = element;
+                    console.log(myrelation);
+                    var myline = document.getElementById('line-' + target.getAttribute('data-myid') + "-" + myrelation.getAttribute("data-relation"));
+                    updateLinePosition(myentity, myrelation, myline);
 
 
 
@@ -222,11 +217,53 @@ function McdGenerator() {
             }
         });
 
+        interact('.draggableRelation').draggable({
+            inertia: true,
+            modifiers: [
+                interact.modifiers.restrictRect({
+                    restriction: 'parent',
+                    endOnly: true
+                })
+            ],
+            listeners: {
+                start(event) {
 
-        const updateLinePosition = (id_relation, id_entity) => {
-            const entity1Rect = document.getElementById('relation-' + id_relation).current.getBoundingClientRect();
-            const entity2Rect = document.getElementById('entity-' + id_entity).current.getBoundingClientRect();
-            const line = document.getElementById("line-" + id_entity + "-" + id_entity);
+                    console.log(event.type, event.target)
+                    console.log(event.target.style.transform);
+                    const matrix = new DOMMatrix(event.target.style.transform);
+                    position.x = matrix.m41;
+                    position.y = matrix.m42;
+
+                },
+                move(event) {
+                    const target = event.target;
+                    const x = (parseFloat(target.getAttribute("data-x")) || 0) + event.dx;
+                    const y = (parseFloat(target.getAttribute("data-y")) || 0) + event.dy;
+
+                    target.style.transform = `translate(${x}px, ${y}px)`;
+                    target.setAttribute("data-x", x);
+                    target.setAttribute("data-y", y);
+                    var myrelation = target;
+                    var myentity1 = document.getElementById('entity-' + target.getAttribute("data-entityone"));
+                    var myentity2 = document.getElementById('entity-' + target.getAttribute("data-entitytwo"));
+                    var myline1 = document.getElementById('line-' + target.getAttribute("data-entityone") + "-" + target.getAttribute("data-relation"));
+                    var myline2 = document.getElementById('line-' + target.getAttribute("data-entitytwo") + "-" + target.getAttribute("data-relation"));
+                    updateLinePosition(myentity2, myrelation, myline2);
+                    updateLinePosition(myentity1, myrelation, myline1);
+
+
+
+                },
+                onend: () => {
+
+                },
+            }
+        });
+
+        const updateLinePosition = (entity, relation, lineRelated) => {
+            const entity1Rect = relation.getBoundingClientRect();
+            const entity2Rect = entity.getBoundingClientRect();
+            const line = lineRelated;
 
             const entity1CenterX = entity1Rect.left + entity1Rect.width / 2;
             const entity1CenterY = entity1Rect.top + entity1Rect.height / 2;
@@ -262,7 +299,7 @@ function McdGenerator() {
             line.style.width = `${distance}px`;
             line.style.transform = `rotate(${angle}deg)`;
             line.style.left = `${entity1EdgeX}px`;
-            line.style.top = `${entity1EdgeY - 50}px`;
+            line.style.top = `${entity1EdgeY - 500}px`;
         };
 
         const isLineTouchingEntity = (entityCenterX, entityCenterY, entityWidth, entityHeight, lineX, lineY, line) => {
@@ -297,51 +334,79 @@ function McdGenerator() {
 
                 </div>
             </div>
-            <div className="card border-0 w-75 mx-auto">
-                <div className="card-header">
-                    <div className="d-flex flex-row justify-content-between">
-                        <h5 className="card-title">{mcd_name}</h5>
-                        <div className="d-flex flex-row">
-                            <a href="#" className="btn btn-info mx-2" onClick={generateEntityDialog}>Entité</a>
-                            <a href="#" className="btn btn-primary mx-2" onClick={createRelationDialog}>Relation</a>
+
+            <h5 className="card-title">{mcd_name}</h5>
+            <div className="d-flex flex-row">
+                <a href="#" className="btn btn-info mx-2" onClick={generateEntityDialog}>Entité</a>
+                <a href="#" className="btn btn-primary mx-2" onClick={createRelationDialog}>Relation</a>
+            </div>
+
+
+            <div style={{ position: "relative", height: "300px", width: "500px" }}>
+
+                {entites.map((item) => (
+                    <>
+                        {console.log(item.relations.name)}
+
+                        <div className="draggableEntity" key={item.id} id={'entity-' + item.id}
+                            data-myid={item.id} style={{
+                                width: "100px",
+                                height: "50px",
+                                backgroundColor: "green",
+                                position: "absolute",
+                                left: "200px",
+                                top: "180px",
+                                cursor: "move",
+                            }}
+                        >
+                            <Entity name={item.name} />
                         </div>
+                        {item.relations.map((relationship) => (
+                            <>
+                                <div className="draggableRelation" data-entitytwo={relationship.idEntityTwo} data-entityone={relationship.idEntityOne} key={relationship.id} data-relation={relationship.id} data-entity={item.id} id={'relation-' + item.id}
+                                    style={{
+                                        width: "100px",
+                                        height: "50px",
+                                        backgroundColor: "green",
+                                        position: "absolute",
+                                        left: "200px",
+                                        top: "180px",
+                                        cursor: "move",
+                                    }}
+                                >
+                                    <Relation name={relationship.name} />
 
-                    </div>
+                                </div>
+                                <div
+                                    id={"line-" + relationship.idEntityOne + "-" + relationship.id}
 
-                </div>
-                <div className="card-body">
+                                    style={{
+                                        position: "absolute",
+                                        height: "2px",
+                                        backgroundColor: "black",
+                                        transformOrigin: "left center",
+                                        zIndex: -1,
+                                    }}
+                                ></div>
+                                <div
+                                    id={"line-" + relationship.idEntityTwo + "-" + relationship.id}
 
-                    {entites.map((item) => (
-                        <>
-                            {console.log(item.relations.name)}
+                                    style={{
+                                        position: "absolute",
+                                        height: "2px",
+                                        backgroundColor: "black",
+                                        transformOrigin: "left center",
+                                        zIndex: -1,
+                                    }}
+                                ></div>
+                            </>
+                        ))}
 
-                            <div className="draggable" key={item.id} id={'entity-' + item.id}>
-                                <Entity name={item.name} />
-                            </div>
-                            {item.relations.map((relationship) => (
-                                <>
-                                    <div className="draggable" key={relationship.id} id={'relation-' + relationship.id}>
-                                        <Relation name={relationship.name} />
+                    </>
+                ))}
 
-                                    </div>
-                                    <div
-                                        id={"line-" + item.id + "-" + relationship.id}
-                                        style={{
-                                            position: "absolute",
-                                            height: "2px",
-                                            backgroundColor: "black",
-                                            transformOrigin: "left center",
-                                            zIndex: -1,
-                                        }}
-                                    ></div>
-                                </>
-                            ))}
+            </div>
 
-                        </>
-                    ))}
-
-                </div>
-            </div >
 
 
 
