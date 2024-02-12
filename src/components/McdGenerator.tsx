@@ -52,6 +52,8 @@ function McdGenerator() {
 
     const createRelation = (name: string, entity_one: string, entity_two: string, card_one: string, card_two: string) => {
         var data = new FormData();
+        const mcd = localStorage.getItem("mcd_uid");
+        data.append('mcd_uid', mcd);
         data.append('name', name);
         data.append('entity_one', entity_one);
         data.append('entity_two', entity_two);
@@ -195,18 +197,22 @@ function McdGenerator() {
                     target.setAttribute("data-y", y);
 
                     var myentity = target;
-                    var selector = `[data-entityone="${target.getAttribute('data-myid')}"]`;
-                    var element = document.querySelector(selector);
-                    if (element == null) {
-                        var selector = `[data-entitytwo="${target.getAttribute('data-myid')}"]`;
-                        var element = document.querySelector(selector);
-                    }
+                    var selectortwo = `[data-entityone="${target.getAttribute('data-myid')}"]`;
+                    var selectorone = `[data-entitytwo="${target.getAttribute('data-myid')}"]`;
+                    var elems = new Set([
+                        ...document.querySelectorAll(selectorone),
+                        ...document.querySelectorAll(selectortwo)
+                    ]);
 
-                    console.log(target.getAttribute('data-myid'));
-                    var myrelation = element;
-                    console.log(myrelation);
-                    var myline = document.getElementById('line-' + target.getAttribute('data-myid') + "-" + myrelation.getAttribute("data-relation"));
-                    updateLinePosition(myentity, myrelation, myline);
+                    elems.forEach(element => {
+                        var myrelation = element;
+                        console.log(myrelation);
+                        var myline = document.getElementById('line-' + target.getAttribute('data-myid') + "-" + myrelation.getAttribute("data-relation"));
+                        updateLinePosition(myentity, myrelation, myline);
+                    });
+
+
+
 
 
 
@@ -298,8 +304,8 @@ function McdGenerator() {
 
             line.style.width = `${distance}px`;
             line.style.transform = `rotate(${angle}deg)`;
-            line.style.left = `${entity1EdgeX}px`;
-            line.style.top = `${entity1EdgeY - 500}px`;
+            line.style.left = `${entity1EdgeX - 500}px`;
+            line.style.top = `${entity1EdgeY - 200}px`;
         };
 
         const isLineTouchingEntity = (entityCenterX, entityCenterY, entityWidth, entityHeight, lineX, lineY, line) => {
@@ -335,79 +341,81 @@ function McdGenerator() {
                 </div>
             </div>
 
-            <h5 className="card-title">{mcd_name}</h5>
-            <div className="d-flex flex-row">
-                <a href="#" className="btn btn-info mx-2" onClick={generateEntityDialog}>Entité</a>
-                <a href="#" className="btn btn-primary mx-2" onClick={createRelationDialog}>Relation</a>
+            <div className="card">
+                <div className="card-header">
+                    <div className="d-flex flex-row">
+                        <a href="#" className="btn btn-info mx-2" onClick={generateEntityDialog}>Entité</a>
+                        <a href="#" className="btn btn-primary mx-2" onClick={createRelationDialog}>Relation</a>
+                        <h5 className="card-title">{mcd_name}</h5>
+                    </div>
+                </div>
+
+
+
+
+                <div style={{ position: "relative" }}>
+
+                    {entites.map((item) => (
+                        <>
+                            {console.log(item.relations.name)}
+
+                            <div className="draggableEntity" key={item.id} id={'entity-' + item.id}
+                                data-myid={item.id} style={{
+                                    width: "100px",
+                                    height: "50px",
+                                    backgroundColor: "green",
+                                    zIndex: 2001,
+                                    cursor: "move",
+                                }}
+                            >
+                                <Entity name={item.name} />
+                            </div>
+                            {item.relations.map((relationship) => (
+                                <>
+                                    <div className="draggableRelation" data-entitytwo={relationship.idEntityTwo} data-entityone={relationship.idEntityOne} key={relationship.id} data-relation={relationship.id} data-entity={item.id} id={'relation-' + item.id}
+                                        style={{
+                                            width: "100px",
+                                            height: "50px",
+                                            backgroundColor: "green",
+                                            zIndex: 2001,
+                                            cursor: "move",
+                                        }}
+                                    >
+                                        <Relation name={relationship.name} />
+
+                                    </div>
+                                    <div
+                                        id={"line-" + relationship.idEntityOne + "-" + relationship.id}
+
+                                        style={{
+                                            position: "absolute",
+                                            height: "2px",
+                                            backgroundColor: "black",
+                                            transformOrigin: "left center",
+                                            zIndex: 9,
+                                        }}
+                                    ></div>
+                                    <div
+                                        id={"line-" + relationship.idEntityTwo + "-" + relationship.id}
+
+                                        style={{
+                                            position: "absolute",
+                                            height: "2px",
+                                            backgroundColor: "black",
+                                            transformOrigin: "left center",
+                                            zIndex: 9,
+                                        }}
+                                    ></div>
+                                </>
+                            ))}
+
+                        </>
+                    ))}
+
+                </div>
+
+
             </div>
-
-
-            <div style={{ position: "relative", height: "300px", width: "500px" }}>
-
-                {entites.map((item) => (
-                    <>
-                        {console.log(item.relations.name)}
-
-                        <div className="draggableEntity" key={item.id} id={'entity-' + item.id}
-                            data-myid={item.id} style={{
-                                width: "100px",
-                                height: "50px",
-                                backgroundColor: "green",
-                                position: "absolute",
-                                left: "200px",
-                                top: "180px",
-                                cursor: "move",
-                            }}
-                        >
-                            <Entity name={item.name} />
-                        </div>
-                        {item.relations.map((relationship) => (
-                            <>
-                                <div className="draggableRelation" data-entitytwo={relationship.idEntityTwo} data-entityone={relationship.idEntityOne} key={relationship.id} data-relation={relationship.id} data-entity={item.id} id={'relation-' + item.id}
-                                    style={{
-                                        width: "100px",
-                                        height: "50px",
-                                        backgroundColor: "green",
-                                        position: "absolute",
-                                        left: "200px",
-                                        top: "180px",
-                                        cursor: "move",
-                                    }}
-                                >
-                                    <Relation name={relationship.name} />
-
-                                </div>
-                                <div
-                                    id={"line-" + relationship.idEntityOne + "-" + relationship.id}
-
-                                    style={{
-                                        position: "absolute",
-                                        height: "2px",
-                                        backgroundColor: "black",
-                                        transformOrigin: "left center",
-                                        zIndex: -1,
-                                    }}
-                                ></div>
-                                <div
-                                    id={"line-" + relationship.idEntityTwo + "-" + relationship.id}
-
-                                    style={{
-                                        position: "absolute",
-                                        height: "2px",
-                                        backgroundColor: "black",
-                                        transformOrigin: "left center",
-                                        zIndex: -1,
-                                    }}
-                                ></div>
-                            </>
-                        ))}
-
-                    </>
-                ))}
-
-            </div>
-
-
 
 
         </>
