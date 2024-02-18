@@ -17,7 +17,9 @@ function Entity(props) {
             title: "Nom de l'attribut",
             input: "text",
             html: "<div class='row'><div class='col-8'>L'attribut est une clé primaire ?</div><div class='col-3'><div class='form-check form-switch'><input id='isPrimary' class='form-check-input' type='checkbox' role='switch' value='1'/></div></div></div>",
-            inputPlaceholder: "Ex: Num_etudiant"
+            inputPlaceholder: "Ex: Num_etudiant",
+            showCancelButton: true,
+            confirmButtonText: 'Créer',
         });
         if (nom_attribut) {
             Swal.fire({
