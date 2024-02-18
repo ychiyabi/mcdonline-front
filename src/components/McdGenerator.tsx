@@ -368,7 +368,7 @@ function McdGenerator() {
                                     cursor: "move",
                                 }}
                             >
-                                <Entity name={item.name} />
+                                <Entity name={item.name} id={item.id} />
                             </div>
                             {item.relations.map((relationship) => (
                                 <>
