@@ -5,33 +5,43 @@ function Entity(props) {
 
     const [attributes, setAttributes] = useState([]);
 
-    const getAllAttributes = () => {
-        axios.get(`http://localhost:8080/api/entities/${props.id}/attributes`)
+    const getAllAttributes = async () => {
+        axios.get('http://localhost:8080/getEntityById?id=' + props.id)
             .then(response => {
                 setAttributes(response.data);
+                console.log(response.data);
+                console.log(attributes);
+
             })
     }
 
     const createAttributDialog = async () => {
         const { value: nom_attribut } = await Swal.fire({
             title: "Nom de l'attribut",
-            input: "text",
-            html: "<div class='row'><div class='col-8'>L'attribut est une clé primaire ?</div><div class='col-3'><div class='form-check form-switch'><input id='isPrimary' class='form-check-input' type='checkbox' role='switch' value='1'/></div></div></div>",
-            inputPlaceholder: "Ex: Num_etudiant",
+            html: `
+            <div class='row'><div class='col-8'>L'attribut est une clé primaire ?</div>
+            <div class='col-3'><div class='form-check form-switch'><input id='isPrimary' class='form-check-input' type='checkbox' role='switch' value='1'/></div>
+            </div>
+            <div class='col-8'>Libellé attribut </div><div class='col'><input id="attributValue" type="text" class="form-control w-50" id="relationName"/></div>
+            </div>`,
             showCancelButton: true,
             confirmButtonText: 'Créer',
-        });
-        if (nom_attribut) {
-            Swal.fire({
-                title: "Le MCD a été créé avec succès",
-                text: nom_attribut,
-                icon: "success"
-            });
-            var checkbox = document.getElementById('isPrimary').value;
-            console.log(checkbox);
-            generateAttribut(nom_attribut, checkbox);
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var checkbox = document.getElementById('isPrimary');
+                var attribut = document.getElementById('attributValue').value;
+                var primaryValue = 0;
+                if (checkbox.checked) {
+                    primaryValue = 1;
+                }
+                else {
+                    primaryValue = 0;
+                }
+                console.log(primaryValue);
+                generateAttribut(attribut, primaryValue);
+            }
 
-        }
+        });
     }
 
     const generateAttribut = (nom_attribut: any, is_primary: any) => {
@@ -39,7 +49,12 @@ function Entity(props) {
         data.append("nom", nom_attribut);
         data.append("id_entite", props.id);
         data.append('is_primary', is_primary)
-        axios.post("http://localhost:8080/insertAttribut", data).then((res) => {
+        console.log(props.id);
+        axios.post("http://localhost:8080/insertAttribut", data, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then((res) => {
             console.log(res.data);
         })
             .catch((res) => {
@@ -56,9 +71,13 @@ function Entity(props) {
             {props.name} <a onClick={createAttributDialog}>Add attribut</a>
             <hr />
             <div className="row">
-                <div className="col">
-                    Attribue
-                </div>
+                {/* <div className="col">
+                    <ul>
+                        {attributes.attributs.map((attr) =>
+                            <li>{attr.name}</li>
+                        )}
+                    </ul>
+                </div> */}
             </div>
         </>
     )

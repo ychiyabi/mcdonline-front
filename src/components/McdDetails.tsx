@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faXmark } from "@fortawesome/free-solid-svg-icons";
 function McdDetails() {
 
     const [relations, setRelations] = useState([]);
@@ -39,6 +39,13 @@ function McdDetails() {
         })
     }
 
+    const deleteAttribut = (id: Number) => {
+        axios.get("http://localhost:8080/deleteAttribut?id=" + id).then(res => {
+            console.log(res.data);
+            getEntitesByMcd();
+        })
+    }
+
     useEffect(() => {
         getRelationsByMcd();
         getEntitesByMcd();
@@ -61,6 +68,12 @@ function McdDetails() {
                         {element.name}<span className="mx-2 text-danger" onClick={(e) => { e.stopPropagation(); deleteEntity(element.id) }}>
                             <FontAwesomeIcon icon={faTrash} />
                         </span>
+                        {element.attributs.map((attr) =>
+                            <>
+                                <h6>{attr.name}<small className="mx-2 text-warning" onClick={(e) => { e.stopPropagation(); deleteAttribut(attr.id) }}><FontAwesomeIcon icon={faXmark} /></small></h6>
+                            </>
+                        )}
+
                     </li>
                 ))}
             </ul>
