@@ -16,15 +16,28 @@ export default function Home() {
   const handleLinePositionChange = (position) => {
     setDivPosition(position);
   };
+  const [updated, setUpdated] = useState(false);
+  const [stateOfMcdGenerator, setStateOfMcdGenerator] = useState(false);
+  const [stateOfMcdDetails, setStateOfMcdDetails] = useState(false);
+  const updateState = () => {
+    setUpdated(!updated);
+  }
+  const updateStateOfMcdGenerator = () => {
+    setStateOfMcdGenerator(!stateOfMcdGenerator)
+  }
+  const updateStateOfMcdDetails = () => {
+    setStateOfMcdDetails(!stateOfMcdDetails)
+  }
   return (
     <>
       <Navbar />
+
       <div className="row">
         <div className="col-3 bg-secondary">
-          <McdDetails />
+          <McdDetails updator={updateStateOfMcdGenerator} statesended={stateOfMcdDetails} />
         </div>
         <div className="col-9">
-          <McdGenerator />
+          <McdGenerator updator={updateStateOfMcdDetails} statesended={stateOfMcdGenerator} />
         </div>
       </div>
 

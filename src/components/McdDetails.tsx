@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faXmark } from "@fortawesome/free-solid-svg-icons";
-function McdDetails() {
+function McdDetails({ updator, statesended }) {
 
     const [relations, setRelations] = useState([]);
     const [entites, setEntites] = useState([]);
@@ -29,6 +29,7 @@ function McdDetails() {
         axios.get("http://localhost:8080/deleteRelation?id=" + id).then(res => {
             console.log(res.data);
             getRelationsByMcd();
+            updator();
         })
     }
 
@@ -36,6 +37,7 @@ function McdDetails() {
         axios.get("http://localhost:8080/deleteEntity?id=" + id).then(res => {
             console.log(res.data);
             getEntitesByMcd();
+            updator();
         })
     }
 
@@ -43,13 +45,15 @@ function McdDetails() {
         axios.get("http://localhost:8080/deleteAttribut?id=" + id).then(res => {
             console.log(res.data);
             getEntitesByMcd();
+            updator();
         })
     }
 
     useEffect(() => {
+
         getRelationsByMcd();
         getEntitesByMcd();
-    }, []);
+    }, [statesended]);
     return (
         <>
             <ul>

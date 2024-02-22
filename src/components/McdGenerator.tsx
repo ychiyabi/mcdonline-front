@@ -6,7 +6,7 @@ import Entity from "./mcdElements/Entity";
 import Relation from './mcdElements/Relation';
 import style from '@/styles/Home.module.css';
 
-function McdGenerator() {
+function McdGenerator({ updator, statesended }) {
 
 
     const [mcd_name, setMcdName] = useState("");
@@ -125,8 +125,10 @@ function McdGenerator() {
     const getEntitesByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
         axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd).then(res => {
-            console.log(res.data);
+
             setEntites(res.data);
+            console.log(entites);
+            updator();
 
         })
     }
@@ -322,12 +324,13 @@ function McdGenerator() {
             return lineX >= lineLeft && lineX <= lineRight && lineY >= lineTop && lineY <= lineBottom;
         };
 
-    }, []);
+        getEntitesByMcd();
+
+    }, [statesended]);
 
 
     return (
         <>
-
             <div className="container-fluid w-50 mx-auto mt-5">
 
 
@@ -362,13 +365,13 @@ function McdGenerator() {
                             <div className="draggableEntity" key={item.id} id={'entity-' + item.id}
                                 data-myid={item.id} style={{
                                     width: "100px",
-                                    height: "50px",
+
                                     backgroundColor: "green",
                                     zIndex: 2001,
                                     cursor: "move",
                                 }}
                             >
-                                <Entity name={item.name} id={item.id} />
+                                <Entity name={item.name} id={item.id} attributs={item.attributs} />
                             </div>
                             {item.relations.map((relationship) => (
                                 <>

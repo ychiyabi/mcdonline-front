@@ -3,17 +3,6 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 function Entity(props) {
 
-    const [attributes, setAttributes] = useState([]);
-
-    const getAllAttributes = async () => {
-        axios.get('http://localhost:8080/getEntityById?id=' + props.id)
-            .then(response => {
-                setAttributes(response.data);
-                console.log(response.data);
-                console.log(attributes);
-
-            })
-    }
 
     const createAttributDialog = async () => {
         const { value: nom_attribut } = await Swal.fire({
@@ -62,22 +51,20 @@ function Entity(props) {
             })
     }
 
-    useEffect(() => {
-        getAllAttributes();
-    }, []);
+
 
     return (
         <>
             {props.name} <a onClick={createAttributDialog}>Add attribut</a>
             <hr />
             <div className="row">
-                {/* <div className="col">
+                {<div className="col">
                     <ul>
-                        {attributes.attributs.map((attr) =>
+                        {props.attributs.map((attr) =>
                             <li>{attr.name}</li>
                         )}
                     </ul>
-                </div> */}
+                </div>}
             </div>
         </>
     )
