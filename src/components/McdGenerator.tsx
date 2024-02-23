@@ -16,6 +16,11 @@ function McdGenerator({ updator, statesended }) {
     const [entity_id, setEntityId] = useState("");
     const position = { x: 0, y: 0 }
     const [entites, setEntites] = useState([]);
+    const [updateParent,setUpdateParent]=useState(false);
+
+    const changeUpdateParent=()=>{
+        setUpdateParent(!updateParent);
+    }
 
     const generateMcd = (mcd_nom) => {
         setMcdName(mcd_nom);
@@ -326,7 +331,7 @@ function McdGenerator({ updator, statesended }) {
 
         getEntitesByMcd();
 
-    }, [statesended]);
+    }, [statesended,updateParent]);
 
 
     return (
@@ -371,7 +376,7 @@ function McdGenerator({ updator, statesended }) {
                                     cursor: "move",
                                 }}
                             >
-                                <Entity name={item.name} id={item.id} attributs={item.attributs} />
+                                <Entity name={item.name} id={item.id} attributs={item.attributs} updator={updator} updatemyaprent={changeUpdateParent} />
                             </div>
                             {item.relations.map((relationship) => (
                                 <>

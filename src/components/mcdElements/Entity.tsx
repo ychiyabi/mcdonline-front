@@ -5,7 +5,7 @@ function Entity(props) {
 
 
     const createAttributDialog = async () => {
-        const { value: nom_attribut } = await Swal.fire({
+        Swal.fire({
             title: "Nom de l'attribut",
             html: `
             <div class='row'><div class='col-8'>L'attribut est une clé primaire ?</div>
@@ -45,6 +45,8 @@ function Entity(props) {
             }
         }).then((res) => {
             console.log(res.data);
+            props.updator();
+            props.updatemyaprent();
         })
             .catch((res) => {
                 console.log(res.data);
