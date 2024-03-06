@@ -12,10 +12,11 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/Navbar.tsx", "src/components/McdGenerator.tsx", "src/components/mcdElements/Entity.tsx", "src/components/mcdElements/Relation.tsx", "src/components/EntityGenerator.tsx", "src/components/McdDetails.tsx"],
   "exclude": ["node_modules"]
 }

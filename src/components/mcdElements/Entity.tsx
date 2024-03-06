@@ -63,7 +63,7 @@ function Entity(props) {
                 {<div className="col">
                     <ul>
                         {props.attributs.map((attr) =>
-                            <li>{attr.name}</li>
+                            <li key={attr.id}>{attr.name}</li>
                         )}
                     </ul>
                 </div>}
