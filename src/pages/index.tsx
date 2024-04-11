@@ -9,7 +9,6 @@ import EntityRelationship from "@/components/EntityRelationship";
 import McdDetails from "@/components/McdDetails";
 
 const inter = Inter({ subsets: ["latin"] });
-
 export default function Home() {
   const [divPosition, setDivPosition] = useState({ x: 0, y: 0 });
 
@@ -30,7 +29,9 @@ export default function Home() {
   }
   return (
     <>
+
       <Navbar />
+      <a href="http://localhost:8080/oauth2/authorization/google">Authenticate</a>
 
       <div className="row">
         <div className="col-3 bg-secondary">
@@ -47,3 +48,6 @@ export default function Home() {
     </>
   );
 }
+
+
+

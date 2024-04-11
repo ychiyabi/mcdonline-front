@@ -10,7 +10,7 @@ function McdDetails({ updator, statesended }) {
 
     const getRelationsByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
-        axios.get("http://localhost:8080/getRelationsByMcd?mcd_uid=" + mcd).then(res => {
+        axios.get("http://localhost:8080/getRelationsByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
             console.log(res.data);
             setRelations(res.data);
         })
@@ -18,7 +18,7 @@ function McdDetails({ updator, statesended }) {
 
     const getEntitesByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
-        axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd).then(res => {
+        axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
             console.log(res.data);
             setEntites(res.data);
 
@@ -26,7 +26,7 @@ function McdDetails({ updator, statesended }) {
     }
 
     const deleteRelation = (id: Number) => {
-        axios.get("http://localhost:8080/deleteRelation?id=" + id).then(res => {
+        axios.get("http://localhost:8080/deleteRelation?id=" + id, { withCredentials: true, }).then(res => {
             console.log(res.data);
             getRelationsByMcd();
             updator();
@@ -34,7 +34,7 @@ function McdDetails({ updator, statesended }) {
     }
 
     const deleteEntity = (id: Number) => {
-        axios.get("http://localhost:8080/deleteEntity?id=" + id).then(res => {
+        axios.get("http://localhost:8080/deleteEntity?id=" + id, { withCredentials: true, }).then(res => {
             console.log(res.data);
             getEntitesByMcd();
             updator();
@@ -42,7 +42,7 @@ function McdDetails({ updator, statesended }) {
     }
 
     const deleteAttribut = (id: Number) => {
-        axios.get("http://localhost:8080/deleteAttribut?id=" + id).then(res => {
+        axios.get("http://localhost:8080/deleteAttribut?id=" + id, { withCredentials: true, }).then(res => {
             console.log(res.data);
             getEntitesByMcd();
             updator();

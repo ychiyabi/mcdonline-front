@@ -42,7 +42,8 @@ function Entity(props) {
         axios.post("http://localhost:8080/insertAttribut", data, {
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            withCredentials: true
         }).then((res) => {
             console.log(res.data);
             props.updator();

@@ -16,9 +16,9 @@ function McdGenerator({ updator, statesended }) {
     const [entity_id, setEntityId] = useState("");
     const position = { x: 0, y: 0 }
     const [entites, setEntites] = useState([]);
-    const [updateParent,setUpdateParent]=useState(false);
+    const [updateParent, setUpdateParent] = useState(false);
 
-    const changeUpdateParent=()=>{
+    const changeUpdateParent = () => {
         setUpdateParent(!updateParent);
     }
 
@@ -26,10 +26,12 @@ function McdGenerator({ updator, statesended }) {
         setMcdName(mcd_nom);
         var data = new FormData();
         data.append('mcd_name', mcd_nom);
+        var sessionid = localStorage.getItem("session_mcd_online")
         axios.post("http://localhost:8080/generateMcd", data, {
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            withCredentials: true,
         }).then((res) => {
             console.log(res.data);
             setMcdUid(res.data);
@@ -48,7 +50,8 @@ function McdGenerator({ updator, statesended }) {
         axios.post("http://localhost:8080/insertEntity", data, {
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            withCredentials: true,
         }).then(res => {
             console.log(res.data);
             getEntitesByMcd();
@@ -67,7 +70,8 @@ function McdGenerator({ updator, statesended }) {
         axios.post("http://localhost:8080/insertRelation", data, {
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            withCredentials: true,
         }).then(res => {
             console.log(res.data);
         })
@@ -129,7 +133,7 @@ function McdGenerator({ updator, statesended }) {
 
     const getEntitesByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
-        axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd).then(res => {
+        axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
 
             setEntites(res.data);
             console.log(entites);
@@ -331,7 +335,7 @@ function McdGenerator({ updator, statesended }) {
 
         getEntitesByMcd();
 
-    }, [statesended,updateParent]);
+    }, [statesended, updateParent]);
 
 
     return (
