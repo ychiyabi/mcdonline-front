@@ -179,6 +179,7 @@ function McdGenerator({ updator, statesended }) {
 
 
 
+
     useEffect(() => {
         interact('.draggableEntity').draggable({
             inertia: true,
@@ -396,6 +397,7 @@ function McdGenerator({ updator, statesended }) {
                                         <Relation name={relationship.name} />
 
                                     </div>
+
                                     <div
                                         id={"line-" + relationship.idEntityOne + "-" + relationship.id}
 
@@ -406,7 +408,9 @@ function McdGenerator({ updator, statesended }) {
                                             transformOrigin: "left center",
                                             zIndex: 9,
                                         }}
-                                    ></div>
+                                    >
+                                        <span> {relationship.cardinality_one}</span>
+                                    </div>
                                     <div
                                         id={"line-" + relationship.idEntityTwo + "-" + relationship.id}
 
@@ -417,7 +421,13 @@ function McdGenerator({ updator, statesended }) {
                                             transformOrigin: "left center",
                                             zIndex: 9,
                                         }}
-                                    ></div>
+                                    >
+                                        <span style={{
+                                            margin: "auto",
+                                            textAlign: "right",
+                                            width: "100%"
+                                        }}> {relationship.cardinality_two}</span>
+                                    </div >
                                 </>
                             ))}
 
@@ -427,7 +437,7 @@ function McdGenerator({ updator, statesended }) {
                 </div>
 
 
-            </div>
+            </div >
 
 
         </>
