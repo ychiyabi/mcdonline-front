@@ -220,7 +220,8 @@ function McdGenerator({ updator, statesended }) {
                         var myrelation = element;
                         console.log(myrelation);
                         var myline = document.getElementById('line-' + target.getAttribute('data-myid') + "-" + myrelation.getAttribute("data-relation"));
-                        updateLinePosition(myentity, myrelation, myline);
+                        var mycardinality = document.getElementById('cardinality-' + target.getAttribute("data-myid") + "-" + myrelation.getAttribute("data-relation"));
+                        updateLinePosition(myentity, myrelation, myline, mycardinality);
                     });
 
 
@@ -266,8 +267,10 @@ function McdGenerator({ updator, statesended }) {
                     var myentity2 = document.getElementById('entity-' + target.getAttribute("data-entitytwo"));
                     var myline1 = document.getElementById('line-' + target.getAttribute("data-entityone") + "-" + target.getAttribute("data-relation"));
                     var myline2 = document.getElementById('line-' + target.getAttribute("data-entitytwo") + "-" + target.getAttribute("data-relation"));
-                    updateLinePosition(myentity2, myrelation, myline2);
-                    updateLinePosition(myentity1, myrelation, myline1);
+                    var mycardinality1 = document.getElementById('cardinality-' + target.getAttribute("data-entityone") + "-" + target.getAttribute("data-relation"));
+                    var mycardinality2 = document.getElementById('cardinality-' + target.getAttribute("data-entitytwo") + "-" + target.getAttribute("data-relation"));
+                    updateLinePosition(myentity2, myrelation, myline2, mycardinality2);
+                    updateLinePosition(myentity1, myrelation, myline1, mycardinality1);
 
 
 
@@ -278,10 +281,11 @@ function McdGenerator({ updator, statesended }) {
             }
         });
 
-        const updateLinePosition = (entity, relation, lineRelated) => {
+        const updateLinePosition = (entity, relation, lineRelated, cardinality) => {
             const entity1Rect = relation.getBoundingClientRect();
             const entity2Rect = entity.getBoundingClientRect();
             const line = lineRelated;
+            const cardinal = cardinality;
 
             const entity1CenterX = entity1Rect.left + entity1Rect.width / 2;
             const entity1CenterY = entity1Rect.top + entity1Rect.height / 2;
@@ -314,8 +318,28 @@ function McdGenerator({ updator, statesended }) {
                 entity2EdgeY -= newDy / 2;
             }
 
+            console.log(angle);
+
+            var ongle = 0;
+            if (angle < 180 && angle > 90) {
+                ongle = 180;
+            }
+            if (angle < 90) {
+                ongle = 360;
+            }
+
+            if (angle < 0) {
+                ongle = 360;
+            }
+
+            if (angle > -180 && angle < -90) {
+                ongle = 180;
+            }
+
+
             line.style.width = `${distance}px`;
             line.style.transform = `rotate(${angle}deg)`;
+            cardinal.style.transform = `rotate(${ongle}deg)`;
             line.style.left = `${entity1EdgeX - 500}px`;
             line.style.top = `${entity1EdgeY - 200}px`;
         };
@@ -409,7 +433,9 @@ function McdGenerator({ updator, statesended }) {
                                             zIndex: 9,
                                         }}
                                     >
-                                        <span> {relationship.cardinality_one}</span>
+                                        <div
+                                            id={"cardinality-" + relationship.idEntityOne + "-" + relationship.id}
+                                            className="d-flex justify-content-center">{relationship.cardinality_one}</div>
                                     </div>
                                     <div
                                         id={"line-" + relationship.idEntityTwo + "-" + relationship.id}
@@ -422,11 +448,10 @@ function McdGenerator({ updator, statesended }) {
                                             zIndex: 9,
                                         }}
                                     >
-                                        <span style={{
-                                            margin: "auto",
-                                            textAlign: "right",
-                                            width: "100%"
-                                        }}> {relationship.cardinality_two}</span>
+                                        <div
+                                            id={"cardinality-" + relationship.idEntityTwo + "-" + relationship.id}
+                                            className="d-flex justify-content-center">{relationship.cardinality_two}</div>
+
                                     </div >
                                 </>
                             ))}
