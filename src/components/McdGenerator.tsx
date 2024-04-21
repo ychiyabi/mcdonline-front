@@ -287,10 +287,10 @@ function McdGenerator({ updator, statesended }) {
             const line = lineRelated;
             const cardinal = cardinality;
 
-            const entity1CenterX = entity1Rect.left + entity1Rect.width / 2;
-            const entity1CenterY = entity1Rect.top + entity1Rect.height / 2;
-            const entity2CenterX = entity2Rect.left + entity2Rect.width / 2;
-            const entity2CenterY = entity2Rect.top + entity2Rect.height / 2;
+            const entity1CenterX = entity1Rect.left + window.scrollX + entity1Rect.width / 2;
+            const entity1CenterY = entity1Rect.top + window.scrollY + entity1Rect.height / 2;
+            const entity2CenterX = entity2Rect.left + window.scrollX + entity2Rect.width / 2;
+            const entity2CenterY = entity2Rect.top + window.scrollY + entity2Rect.height / 2;
 
             const dx = entity2CenterX - entity1CenterX;
             const dy = entity2CenterY - entity1CenterY;
@@ -318,7 +318,6 @@ function McdGenerator({ updator, statesended }) {
                 entity2EdgeY -= newDy / 2;
             }
 
-            console.log(angle);
 
             var ongle = 0;
             if (angle < 180 && angle > 90) {
@@ -336,12 +335,15 @@ function McdGenerator({ updator, statesended }) {
                 ongle = 180;
             }
 
+            const zoom = (window.outerWidth - 10) / window.innerWidth
 
             line.style.width = `${distance}px`;
             line.style.transform = `rotate(${angle}deg)`;
             cardinal.style.transform = `rotate(${ongle}deg)`;
-            line.style.left = `${entity1EdgeX - 500}px`;
-            line.style.top = `${entity1EdgeY - 200}px`;
+            line.style.left = `${entity1CenterX - (280 + (100 * zoom))}px`;
+            line.style.top = `${entity1CenterY - 250}px`;
+            console.log(zoom);
+
         };
 
         const isLineTouchingEntity = (entityCenterX, entityCenterY, entityWidth, entityHeight, lineX, lineY, line) => {
@@ -390,37 +392,32 @@ function McdGenerator({ updator, statesended }) {
 
 
 
-                <div style={{ position: "relative" }}>
+                <div style={{
+                    position: "relative"
+                    , backgroundImage: "url('paper_mcd.png')",
+                    backgroundRepeat: "repeat",
+                    height: "1000px"
+
+                    , zIndex: 1
+                }}>
 
                     {entites.map((item) => (
                         <>
                             {console.log(item.relations.name)}
 
-                            <div className="draggableEntity" key={item.id} id={'entity-' + item.id}
-                                data-myid={item.id} style={{
-                                    width: "100px",
-
-                                    backgroundColor: "green",
-                                    zIndex: 2001,
-                                    cursor: "move",
-                                }}
+                            <div className="draggableEntity class-diagram" key={item.id} id={'entity-' + item.id}
+                                data-myid={item.id}
                             >
                                 <Entity name={item.name} id={item.id} attributs={item.attributs} updator={updator} updatemyaprent={changeUpdateParent} />
                             </div>
                             {item.relations.map((relationship) => (
                                 <>
-                                    <div className="draggableRelation" data-entitytwo={relationship.idEntityTwo} data-entityone={relationship.idEntityOne} key={relationship.id} data-relation={relationship.id} data-entity={item.id} id={'relation-' + item.id}
-                                        style={{
-                                            width: "100px",
-                                            height: "50px",
-                                            backgroundColor: "green",
-                                            zIndex: 2001,
-                                            cursor: "move",
-                                        }}
-                                    >
-                                        <Relation name={relationship.name} />
+                                    <div className="draggableRelation d-flex align-items-center justify-content-center" data-entitytwo={relationship.idEntityTwo} data-entityone={relationship.idEntityOne} key={relationship.id} data-relation={relationship.id} data-entity={item.id} id={'relation-' + item.id}
 
-                                    </div>
+                                    >
+                                        <div className="h5">{relationship.name}</div>
+
+                                    </div >
 
                                     <div
                                         id={"line-" + relationship.idEntityOne + "-" + relationship.id}
@@ -430,12 +427,12 @@ function McdGenerator({ updator, statesended }) {
                                             height: "2px",
                                             backgroundColor: "black",
                                             transformOrigin: "left center",
-                                            zIndex: 9,
+                                            zIndex: 2,
                                         }}
                                     >
                                         <div
                                             id={"cardinality-" + relationship.idEntityOne + "-" + relationship.id}
-                                            className="d-flex justify-content-center">{relationship.cardinality_one}</div>
+                                            className="d-flex justify-content-center h5">{relationship.cardinality_one}</div>
                                     </div>
                                     <div
                                         id={"line-" + relationship.idEntityTwo + "-" + relationship.id}
@@ -445,12 +442,12 @@ function McdGenerator({ updator, statesended }) {
                                             height: "2px",
                                             backgroundColor: "black",
                                             transformOrigin: "left center",
-                                            zIndex: 9,
+                                            zIndex: 2,
                                         }}
                                     >
                                         <div
                                             id={"cardinality-" + relationship.idEntityTwo + "-" + relationship.id}
-                                            className="d-flex justify-content-center">{relationship.cardinality_two}</div>
+                                            className="d-flex justify-content-center h5">{relationship.cardinality_two}</div>
 
                                     </div >
                                 </>

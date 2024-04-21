@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 function Entity(props) {
 
 
@@ -58,8 +60,9 @@ function Entity(props) {
 
     return (
         <>
-            {props.name} <a onClick={createAttributDialog}>Add attribut</a>
-            <hr />
+            <div className="header h4 text-white">{props.name} <a onClick={createAttributDialog}><FontAwesomeIcon icon={faPlus} /></a>
+
+            </div>
             <div className="row">
                 {<div className="col">
                     <ul>

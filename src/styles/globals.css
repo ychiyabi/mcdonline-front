@@ -2,8 +2,6 @@
 
 }
 .draggableRelation {
-  width: 25%;
-  min-height: 6.5em;
   margin: 1rem 0 0 1rem;
   background-color: #29e;
   color: white;
@@ -11,6 +9,13 @@
   padding:5px;
   touch-action: none;
   user-select: none;
+  width:12%;
+  height:60px;
+  border-radius: 200px 200px 200px 200px;
+-webkit-border-radius: 200px 200px 200px 200px;
+-moz-border-radius: 200px 200px 200px 200px;
+z-index: 9000;
+position: relative;
 }
 body{
   background-color: #f6f8fa !important;
@@ -38,3 +43,33 @@ body{
   transform-origin: 0 0; /* Set origin to top-left corner */
   margin-left:50px;
 }
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+}
+
+.class-diagram {
+  width: 13%;
+  margin: 60px auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  cursor:move;
+  position: relative;
+  z-index: 5000;
+}
+
+.header {
+  background-color: #29e;
+  color: white;
+  padding: 10px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  cursor:pointer;
+}
+
+
+

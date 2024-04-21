@@ -34,10 +34,10 @@ export default function Home() {
       <a href="http://localhost:8080/oauth2/authorization/google">Authenticate</a>
 
       <div className="row">
-        <div className="col-3 bg-secondary">
+        <div className="col-2 bg-secondary">
           <McdDetails updator={updateStateOfMcdGenerator} statesended={stateOfMcdDetails} />
         </div>
-        <div className="col-9">
+        <div className="col-10">
           <McdGenerator updator={updateStateOfMcdDetails} statesended={stateOfMcdGenerator} />
         </div>
       </div>
