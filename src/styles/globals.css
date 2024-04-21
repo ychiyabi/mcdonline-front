@@ -3,13 +3,13 @@
 }
 .draggableRelation {
   margin: 1rem 0 0 1rem;
-  background-color: #29e;
+  background-color: rgb(66, 165, 237);
   color: white;
   border-radius: 0.75em;
   padding:5px;
   touch-action: none;
   user-select: none;
-  width:12%;
+  width:15%;
   height:60px;
   border-radius: 200px 200px 200px 200px;
 -webkit-border-radius: 200px 200px 200px 200px;
@@ -23,7 +23,7 @@ body{
   font-weight: 400;
 }
 .customized-navbar{
-  background-color: #00c292 !important;
+  background-color: rgb(66, 165, 237) !important;
   color:white !important;
 }
 .svgContainer {
@@ -63,12 +63,15 @@ body {
 }
 
 .header {
-  background-color: #29e;
+  background-color: rgb(66, 165, 237);
   color: white;
   padding: 10px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  cursor:pointer;
+}
+
+.cursor-pointer{
+  cursor: pointer;
 }
 
 

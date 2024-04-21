@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import interact from 'interactjs';
 import Entity from "./mcdElements/Entity";
-import Relation from './mcdElements/Relation';
-import style from '@/styles/Home.module.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDiagramProject, faFileCirclePlus, faFolderPlus } from "@fortawesome/free-solid-svg-icons";
 
 function McdGenerator({ updator, statesended }) {
 
@@ -340,8 +340,8 @@ function McdGenerator({ updator, statesended }) {
             line.style.width = `${distance}px`;
             line.style.transform = `rotate(${angle}deg)`;
             cardinal.style.transform = `rotate(${ongle}deg)`;
-            line.style.left = `${entity1CenterX - (280 + (100 * zoom))}px`;
-            line.style.top = `${entity1CenterY - 250}px`;
+            line.style.left = `${entity1CenterX - (230 + (100 * zoom))}px`;
+            line.style.top = `${entity1CenterY - 160}px`;
             console.log(zoom);
 
         };
@@ -367,24 +367,14 @@ function McdGenerator({ updator, statesended }) {
 
     return (
         <>
-            <div className="container-fluid w-50 mx-auto mt-5">
-
-
-                <div className="d-flex flex-row justify-content-center my-3">
-
-                    <button type="button" className="btn btn-success btn-lg mx-2" onClick={generateMcdDialog}>Créer un nouveau MCD</button>
-                    <button type="button" className="btn btn-warning btn-lg mx-2">Modifier un MCD existant</button>
-
-
-
-                </div>
-            </div>
 
             <div className="card">
                 <div className="card-header">
                     <div className="d-flex flex-row">
-                        <a href="#" className="btn btn-info mx-2" onClick={generateEntityDialog}>Entité</a>
-                        <a href="#" className="btn btn-primary mx-2" onClick={createRelationDialog}>Relation</a>
+                        <a href="#" className="btn btn-warning  btn-lg mx-2 " onClick={generateMcdDialog}><FontAwesomeIcon className="mx-2" icon={faFolderPlus} />Nouveau modéle conceptuel de données</a>
+                        <a href="#" className="btn btn-success btn-lg mx-2" onClick={generateEntityDialog}><FontAwesomeIcon className="mx-2" icon={faFileCirclePlus} />Ajouter une entité </a>
+                        <a href="#" className="btn btn-secondary  btn-lg mx-2" onClick={createRelationDialog}><FontAwesomeIcon className="mx-2" icon={faDiagramProject} />Ajouter une association </a>
+
                         <h5 className="card-title">{mcd_name}</h5>
                     </div>
                 </div>

@@ -31,9 +31,9 @@ export default function Home() {
     <>
 
       <Navbar />
-      <a href="http://localhost:8080/oauth2/authorization/google">Authenticate</a>
 
-      <div className="row">
+
+      <div className="row mt-3">
         <div className="col-2 bg-secondary">
           <McdDetails updator={updateStateOfMcdGenerator} statesended={stateOfMcdDetails} />
         </div>

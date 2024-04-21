@@ -60,7 +60,7 @@ function Entity(props) {
 
     return (
         <>
-            <div className="header h4 text-white">{props.name} <a onClick={createAttributDialog}><FontAwesomeIcon icon={faPlus} /></a>
+            <div className="header h4 text-white">{props.name}
 
             </div>
             <div className="row">
@@ -70,8 +70,9 @@ function Entity(props) {
                             <li key={attr.id}>{attr.name}</li>
                         )}
                     </ul>
+                    <div className="ms-2 mb-3 cursor-pointer"><a onClick={createAttributDialog}><FontAwesomeIcon icon={faPlus} />{"<<Ajouter attribut>>"}</a></div>
                 </div>}
-            </div>
+            </div >
         </>
     )
 }
