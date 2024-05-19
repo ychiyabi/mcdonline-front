@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faXmark } from "@fortawesome/free-solid-svg-icons";
-import ConfirmationModal from "./ConfirmationModal";
+import ConfirmationModal from "./Dialogs/ConfirmationModal";
 function McdDetails({ updator, statesended }) {
 
     const [relations, setRelations] = useState([]);

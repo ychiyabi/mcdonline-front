@@ -1,9 +1,19 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import AttributDialog from "../Dialogs/AttributDialog";
+import { useState } from "react";
 function Entity(props) {
+    const [show, setShow] = useState(false);
+    const [functionExcute, setFunctionExecute] = useState("");
+    const handleClose = () => setShow(false);
+    const handleShow = () => {
+        setShow(true);
+
+    }
+
+
 
 
     const createAttributDialog = async () => {
@@ -35,6 +45,8 @@ function Entity(props) {
         });
     }
 
+
+
     const generateAttribut = (nom_attribut: any, is_primary: any) => {
         var data = new FormData();
         data.append("nom", nom_attribut);
@@ -60,6 +72,7 @@ function Entity(props) {
 
     return (
         <>
+            <AttributDialog onConfirm={generateAttribut} show={show} handleClose={handleClose} />
             <div className="header h4 text-white">{props.name}
 
             </div>
@@ -70,7 +83,7 @@ function Entity(props) {
                             <li key={attr.id}>{attr.name}</li>
                         )}
                     </ul>
-                    <div className="ms-2 mb-3 cursor-pointer"><a onClick={createAttributDialog}><FontAwesomeIcon icon={faPlus} />{"<<Ajouter attribut>>"}</a></div>
+                    <div className="ms-2 mb-3 cursor-pointer"><a onClick={(e) => { e.stopPropagation(); handleShow(); }}><FontAwesomeIcon icon={faPlus} />{"<<Ajouter attribut>>"}</a></div>
                 </div>}
             </div >
         </>

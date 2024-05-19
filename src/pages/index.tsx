@@ -1,12 +1,10 @@
 
 import { Inter } from "next/font/google";
 import { useState } from "react";
-import styles from "@/styles/Home.module.css";
 import McdGenerator from "@/components/McdGenerator";
-import EntityGenerator from "@/components/EntityGenerator";
 import Navbar from "@/components/Navbar";
-import EntityRelationship from "@/components/EntityRelationship";
 import McdDetails from "@/components/McdDetails";
+import Main from "@/components/Main";
 
 const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
@@ -18,6 +16,7 @@ export default function Home() {
   const [updated, setUpdated] = useState(false);
   const [stateOfMcdGenerator, setStateOfMcdGenerator] = useState(false);
   const [stateOfMcdDetails, setStateOfMcdDetails] = useState(false);
+  const [authenticationRetour, setAuthenticationRetour] = useState(false);
   const updateState = () => {
     setUpdated(!updated);
   }
@@ -27,24 +26,26 @@ export default function Home() {
   const updateStateOfMcdDetails = () => {
     setStateOfMcdDetails(!stateOfMcdDetails)
   }
+
+  const updateEtatDeAuthentification = (etat: boolean) => {
+    setAuthenticationRetour(etat);
+  }
   return (
     <>
 
       <Navbar />
 
+      {!authenticationRetour ? <Main etatDeRetour={updateEtatDeAuthentification} /> :
 
-      <div className="row mt-3">
-        <div className="col-2 bg-secondary">
-          <McdDetails updator={updateStateOfMcdGenerator} statesended={stateOfMcdDetails} />
+        <div className="row mt-3">
+          <div className="col-2 bg-secondary">
+            <McdDetails updator={updateStateOfMcdGenerator} statesended={stateOfMcdDetails} />
+          </div>
+          <div className="col-10">
+            <McdGenerator updator={updateStateOfMcdDetails} statesended={stateOfMcdGenerator} />
+          </div>
         </div>
-        <div className="col-10">
-          <McdGenerator updator={updateStateOfMcdDetails} statesended={stateOfMcdGenerator} />
-        </div>
-      </div>
-
-      {/* <EntityRelationship /> */}
-
-      {/* <EntityGenerator /> */}
+      }
     </>
   );
 }
