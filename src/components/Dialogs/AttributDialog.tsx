@@ -17,8 +17,9 @@ function AttributDialog({ onConfirm, handleClose, show }) {
     }
 
     const confirmCreation = () => {
-        primary == 'on' ? setPrimary('1') : setPrimary('0')
-        onConfirm(attribut, '0');
+        var pk;
+        primary == 'on' ? pk = '1' : pk = '0';
+        onConfirm(attribut, pk);
         handleClose();
     }
 
