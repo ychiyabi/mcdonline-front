@@ -6,7 +6,6 @@ import AttributDialog from "../Dialogs/AttributDialog";
 import { useState } from "react";
 function Entity(props) {
     const [show, setShow] = useState(false);
-    const [functionExcute, setFunctionExecute] = useState("");
     const handleClose = () => setShow(false);
     const handleShow = () => {
         setShow(true);

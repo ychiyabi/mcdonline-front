@@ -5,6 +5,9 @@ import interact from 'interactjs';
 import Entity from "./mcdElements/Entity";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiagramProject, faFileCirclePlus, faFolderPlus } from "@fortawesome/free-solid-svg-icons";
+import RelationDialog from "./Dialogs/RelationDialog";
+import EntityDialog from "./Dialogs/EntityDialog";
+import McdDialog from "./Dialogs/McdDialog";
 
 function McdGenerator({ updator, statesended }) {
 
@@ -36,6 +39,7 @@ function McdGenerator({ updator, statesended }) {
             console.log(res.data);
             setMcdUid(res.data);
             localStorage.setItem('mcd_uid', res.data);
+            getEntitesByMcd();
         }).catch(error => {
 
         })
@@ -77,59 +81,22 @@ function McdGenerator({ updator, statesended }) {
         })
     }
 
-    const handleChangeRelationName = (e) => {
-        setRelationName(e.target.value);
+    //ANCHOR - Dialog Relation :smile:
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => {
+        setShow(true);
     }
 
-    const createRelationDialog = () => {
-        var entitesString = "";
-        entites.forEach(element => {
-            entitesString += "<option value='" + element.id + "'>" + element.name + "</option>";
-            console.log(element);
-        });
-        Swal.fire({
-            title: 'Création relation',
-            width: 950,
-            html: `
-            <div class="d-flex flex-row w-50 my-4 mx-auto">
-                <label class="w-50 mt-2">Nom de la relation</label>
-                <input type="text" class="form-control w-50" id="relationName"/>
-                </div>
-            <div class="row my-4">
-            <div class="col"><label class="mt-2">Cardinalité Entité une</label></div>
-            <div class="col"><select id="cardOne" class="form-select"><option value="1,1">1,1</option><option>1,n</option><option>0,n</option></select></div>
-            <div class="col"><label class="mt-2">Enité une</label></div>    
-            <div class="col"><select id="entiteOne" class="form-select">`+ entitesString + `</select></div>
-                </div>
-                <div class="row my-4">
-            <div class="col"><label class="mt-2">Cardinalité Entité deux</label></div>
-            <div class="col"><select id="cardTwo" class="form-select"><option value="1,1">1,1</option><option>1,n</option><option>0,n</option></select></div>
-            <div class="col"><label class="mt-2">Enité deux</label></div>    
-            <div class="col"><select id="entiteTwo" class="form-select">`+ entitesString + `</select></div>
-                </div>
-            </div>`,
-            showCancelButton: true,
-            confirmButtonText: 'Créer',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var relation = document.getElementById('relationName').value;
-                var entity_one = document.getElementById('entiteOne').value;
-                var entity_two = document.getElementById('entiteTwo').value;
-                var card_one = document.getElementById('cardOne').value;
-                var card_two = document.getElementById('cardTwo').value;
-                createRelation(relation, entity_one, entity_two, card_one, card_two);
-                Swal.fire({
-                    title: "La relation a été créé avec succès",
-                    text: "Relation " + relation + "Créer",
-                    icon: "success"
-                });
+    //ANCHOR - Entity Dialog
+    const [showEntityDialog, setShowEntityDialog] = useState(false);
+    const handleEntityDialogClose = () => setShowEntityDialog(false);
+    const handleEntityDialogShow = () => setShowEntityDialog(true);
 
-                getEntitesByMcd();
-
-            }
-        });
-
-    }
+    //ANCHOR - mcd Dialog
+    const [showMcdDialog, setShowMcdDialog] = useState(false);
+    const handleMcdDialogClose = () => setShowMcdDialog(false);
+    const handleMcdDialogShow = () => setShowMcdDialog(true);
 
     const getEntitesByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
@@ -159,25 +126,6 @@ function McdGenerator({ updator, statesended }) {
 
         }
     }
-
-    const generateEntityDialog = async () => {
-        const { value: entity_nom } = await Swal.fire({
-            title: "Saisir le nom de l'entité",
-            input: "text",
-            inputLabel: "Nom de l'entité",
-            inputPlaceholder: "Ex: Personne"
-        });
-        if (entity_nom) {
-            Swal.fire({
-                title: "Entité a été créé avec succès",
-                text: entity_nom,
-                icon: "success"
-            });
-            createEntity(entity_nom);
-        }
-    }
-
-
 
 
     useEffect(() => {
@@ -367,13 +315,15 @@ function McdGenerator({ updator, statesended }) {
 
     return (
         <>
-
+            <RelationDialog show={show} entites={entites} onConfirm={createRelation} handleClose={handleClose} updator={getEntitesByMcd} />
+            <EntityDialog show={showEntityDialog} onConfirm={createEntity} handleClose={handleEntityDialogClose} />
+            <McdDialog show={showMcdDialog} onConfirm={generateMcd} handleClose={handleMcdDialogClose} />
             <div className="card">
                 <div className="card-header">
                     <div className="d-flex flex-row">
-                        <a href="#" className="btn btn-warning  btn-lg mx-2 " onClick={generateMcdDialog}><FontAwesomeIcon className="mx-2" icon={faFolderPlus} />Nouveau modéle conceptuel de données</a>
-                        <a href="#" className="btn btn-success btn-lg mx-2" onClick={generateEntityDialog}><FontAwesomeIcon className="mx-2" icon={faFileCirclePlus} />Ajouter une entité </a>
-                        <a href="#" className="btn btn-secondary  btn-lg mx-2" onClick={createRelationDialog}><FontAwesomeIcon className="mx-2" icon={faDiagramProject} />Ajouter une association </a>
+                        <a href="#" className="btn btn-warning  btn-lg mx-2 " onClick={handleMcdDialogShow}><FontAwesomeIcon className="mx-2" icon={faFolderPlus} />Nouveau modéle conceptuel de données</a>
+                        <a href="#" className="btn btn-success btn-lg mx-2" onClick={handleEntityDialogShow}><FontAwesomeIcon className="mx-2" icon={faFileCirclePlus} />Ajouter une entité </a>
+                        <a href="#" className="btn btn-secondary  btn-lg mx-2" onClick={handleShow}><FontAwesomeIcon className="mx-2" icon={faDiagramProject} />Ajouter une association </a>
 
                         <h5 className="card-title">{mcd_name}</h5>
                     </div>
