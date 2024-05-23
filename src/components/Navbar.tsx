@@ -31,9 +31,13 @@ function Navbar() {
 
             <nav className="navbar navbar-light customized-navbar">
                 <div className="container-fluid">
-                    <div className="btn-group">
-                        <button type="button" className="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Action
+
+                    <span className="navbar-brand mb-0 h1 text-white">Mcd Online</span>
+                    <a href="http://localhost:8080/oauth2/authorization/google">Authenticate</a>
+
+                    <div className="btn-group mx-5">
+                        <button type="button" className="btn customized-navbar dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Mon compte
                         </button>
                         <ul className="dropdown-menu">
                             <li><a className="dropdown-item" href="#">{email}</a></li>
@@ -44,11 +48,9 @@ function Navbar() {
                             })}
 
                             <li><hr className="dropdown-divider" /></li>
-                            <li><a className="dropdown-item" href="#">Logout</a></li>
+                            <li><a className="dropdown-item" href="#">Se déconnecter</a></li>
                         </ul>
                     </div>
-                    <span className="navbar-brand mb-0 h1 text-white">Mcd Online</span>
-                    <a href="http://localhost:8080/oauth2/authorization/google">Authenticate</a>
                 </div>
             </nav>
         </>

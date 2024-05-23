@@ -37,7 +37,7 @@ function McdDetails({ updator, statesended }) {
     const getRelationsByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
 
-        axios.get("http://localhost:8080/getRelationsByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
+        axios.get(process.env.NEXT_PUBLIC_API_URI + "/getRelationsByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
             console.log(res.data);
             setRelations(res.data);
         })
@@ -45,7 +45,7 @@ function McdDetails({ updator, statesended }) {
 
     const getEntitesByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
-        axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
+        axios.get(process.env.NEXT_PUBLIC_API_URI + "/getEntitesByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
             console.log(res.data);
             setEntites(res.data);
 
@@ -53,7 +53,7 @@ function McdDetails({ updator, statesended }) {
     }
 
     const deleteRelation = (id: Number) => {
-        axios.get("http://localhost:8080/deleteRelation?id=" + id, { withCredentials: true, }).then(res => {
+        axios.get(process.env.NEXT_PUBLIC_API_URI + "/deleteRelation?id=" + id, { withCredentials: true, }).then(res => {
             console.log(res.data);
             getRelationsByMcd();
             updator();
@@ -61,7 +61,7 @@ function McdDetails({ updator, statesended }) {
     }
 
     const deleteEntity = (id: Number) => {
-        axios.get("http://localhost:8080/deleteEntity?id=" + id, { withCredentials: true, }).then(res => {
+        axios.get(process.env.NEXT_PUBLIC_API_URI + "/deleteEntity?id=" + id, { withCredentials: true, }).then(res => {
             console.log(res.data);
             getEntitesByMcd();
             updator();
@@ -70,7 +70,7 @@ function McdDetails({ updator, statesended }) {
 
     const deleteAttribut = (id: Number) => {
 
-        axios.get("http://localhost:8080/deleteAttribut?id=" + id, { withCredentials: true, }).then(res => {
+        axios.get(process.env.NEXT_PUBLIC_API_URI + "/deleteAttribut?id=" + id, { withCredentials: true, }).then(res => {
             console.log(res.data);
             getEntitesByMcd();
             updator();
@@ -86,7 +86,7 @@ function McdDetails({ updator, statesended }) {
     return (
         <>
             <ConfirmationModal onConfirm={onConfirm} show={show} handleClose={handleClose} message={messageConfirm} />
-            <div className="h4 text-white d-flex justify-content-center mb-2 mt-3">Liste associations</div>
+            <div className="h4 text-white d-flex justify-content-center mb-2 mt-3">Liste des associations</div>
             <ul>
                 {relations.map((element) => (
                     <li key={element.id} className="h5 text-white">
@@ -98,7 +98,7 @@ function McdDetails({ updator, statesended }) {
             </ul >
             <hr className="text-white" />
 
-            <div className="h4 text-white d-flex justify-content-center mb-2">Liste entité</div>
+            <div className="h4 text-white d-flex justify-content-center mb-2">Liste des entités</div>
             <ul>
                 {entites.map((element) => (
                     <li key={element.id} className="h5 text-white">

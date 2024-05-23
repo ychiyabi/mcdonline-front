@@ -1,13 +1,15 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 import interact from 'interactjs';
 import Entity from "./mcdElements/Entity";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDiagramProject, faFileCirclePlus, faFolderPlus } from "@fortawesome/free-solid-svg-icons";
+import { faDiagramProject, faFileCirclePlus, faFolderPlus, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import RelationDialog from "./Dialogs/RelationDialog";
 import EntityDialog from "./Dialogs/EntityDialog";
 import McdDialog from "./Dialogs/McdDialog";
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import LoadingDialog from "./Dialogs/LoadingDialog";
 
 function McdGenerator({ updator, statesended }) {
 
@@ -21,6 +23,42 @@ function McdGenerator({ updator, statesended }) {
     const [entites, setEntites] = useState([]);
     const [updateParent, setUpdateParent] = useState(false);
 
+
+
+    const downloadPDF = async () => {
+        handleLoadingDialogShow();
+        const content = document.getElementById('mcdContainer');
+
+        if (!content) {
+            console.error('Content not found!');
+            return;
+        }
+
+        const canvas = await html2canvas(content, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = pdfWidth;
+        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        // Calculate the coordinates to center the image
+        const x = (pdfWidth - imgWidth) / 2;
+        const y = (pdfHeight - imgHeight) / 2;
+
+        pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+        pdf.save('download.pdf');
+        handleLoadingDialogClose();
+
+    }
+
     const changeUpdateParent = () => {
         setUpdateParent(!updateParent);
     }
@@ -30,7 +68,7 @@ function McdGenerator({ updator, statesended }) {
         var data = new FormData();
         data.append('mcd_name', mcd_nom);
         var sessionid = localStorage.getItem("session_mcd_online")
-        axios.post("http://localhost:8080/generateMcd", data, {
+        axios.post(process.env.NEXT_PUBLIC_API_URI + "/generateMcd", data, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -51,7 +89,7 @@ function McdGenerator({ updator, statesended }) {
         var data = new FormData();
         data.append("entity", entity);
         data.append("mcd", mcd);
-        axios.post("http://localhost:8080/insertEntity", data, {
+        axios.post(process.env.NEXT_PUBLIC_API_URI + "/insertEntity", data, {
             headers: {
                 "Content-Type": "application/json"
             },
@@ -71,12 +109,13 @@ function McdGenerator({ updator, statesended }) {
         data.append('entity_two', entity_two);
         data.append('car_one', card_one);
         data.append('car_two', card_two);
-        axios.post("http://localhost:8080/insertRelation", data, {
+        axios.post(process.env.NEXT_PUBLIC_API_URI + "/insertRelation", data, {
             headers: {
                 "Content-Type": "application/json"
             },
             withCredentials: true,
         }).then(res => {
+            getEntitesByMcd();
             console.log(res.data);
         })
     }
@@ -98,9 +137,14 @@ function McdGenerator({ updator, statesended }) {
     const handleMcdDialogClose = () => setShowMcdDialog(false);
     const handleMcdDialogShow = () => setShowMcdDialog(true);
 
+    //ANCHOR - Loading DIALOG
+    const [showLoadingDialog, setShowLoadingialog] = useState(false);
+    const handleLoadingDialogClose = () => setShowLoadingialog(false);
+    const handleLoadingDialogShow = () => setShowLoadingialog(true);
+
     const getEntitesByMcd = () => {
         const mcd = localStorage.getItem("mcd_uid");
-        axios.get("http://localhost:8080/getEntitesByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
+        axios.get(process.env.NEXT_PUBLIC_API_URI + "/getEntitesByMcd?mcd_uid=" + mcd, { withCredentials: true, }).then(res => {
 
             setEntites(res.data);
             console.log(entites);
@@ -109,23 +153,7 @@ function McdGenerator({ updator, statesended }) {
         })
     }
 
-    const generateMcdDialog = async () => {
-        const { value: mcd_nom } = await Swal.fire({
-            title: "Saisir le nom du MCD",
-            input: "text",
-            inputLabel: "Nom du MCD",
-            inputPlaceholder: "Ex: Modéle de données de la banque"
-        });
-        if (mcd_nom) {
-            Swal.fire({
-                title: "Le MCD a été créé avec succès",
-                text: mcd_nom,
-                icon: "success"
-            });
-            generateMcd(mcd_nom);
 
-        }
-    }
 
 
     useEffect(() => {
@@ -318,13 +346,14 @@ function McdGenerator({ updator, statesended }) {
             <RelationDialog show={show} entites={entites} onConfirm={createRelation} handleClose={handleClose} updator={getEntitesByMcd} />
             <EntityDialog show={showEntityDialog} onConfirm={createEntity} handleClose={handleEntityDialogClose} />
             <McdDialog show={showMcdDialog} onConfirm={generateMcd} handleClose={handleMcdDialogClose} />
+            <LoadingDialog show={showLoadingDialog} handleClose={handleLoadingDialogClose} />
             <div className="card">
                 <div className="card-header">
                     <div className="d-flex flex-row">
                         <a href="#" className="btn btn-warning  btn-lg mx-2 " onClick={handleMcdDialogShow}><FontAwesomeIcon className="mx-2" icon={faFolderPlus} />Nouveau modéle conceptuel de données</a>
                         <a href="#" className="btn btn-success btn-lg mx-2" onClick={handleEntityDialogShow}><FontAwesomeIcon className="mx-2" icon={faFileCirclePlus} />Ajouter une entité </a>
                         <a href="#" className="btn btn-secondary  btn-lg mx-2" onClick={handleShow}><FontAwesomeIcon className="mx-2" icon={faDiagramProject} />Ajouter une association </a>
-
+                        <a href="#" className="btn btn-info  btn-lg mx-2" onClick={downloadPDF}><FontAwesomeIcon className="mx-2" icon={faFilePdf} />Télécharger le MCD</a>
                         <h5 className="card-title">{mcd_name}</h5>
                     </div>
                 </div>
@@ -336,10 +365,10 @@ function McdGenerator({ updator, statesended }) {
                     position: "relative"
                     , backgroundImage: "url('paper_mcd.png')",
                     backgroundRepeat: "repeat",
-                    height: "1000px"
+                    height: "100%"
 
                     , zIndex: 1
-                }}>
+                }} id="mcdContainer">
 
                     {entites.map((item) => (
                         <>
