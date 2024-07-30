@@ -22,6 +22,22 @@ function Navbar() {
                 console.log("error");
             })
     }
+
+    const handleClickElement = (event) => {
+        const slug = event.target.getAttribute('data-slug');
+        getMcdBySlug(slug);
+    }
+    const getMcdBySlug = (slug) => {
+        axios.get(process.env.NEXT_PUBLIC_API_URI + "/getMcdBySlug?slug=" + slug, { withCredentials: true, }).then(res => {
+            console.log(res);
+            localStorage.setItem('mcd_uid', res.data.uuid);
+            window.location.reload();
+
+        })
+            .catch(error => {
+                console.log("error");
+            })
+    }
     useEffect(() => {
         listMcd();
         EmailConnected();
@@ -44,7 +60,7 @@ function Navbar() {
                             <li><hr className="dropdown-divider" /></li>
                             <li><h6 className="ms-5">Mes MCD</h6></li>
                             {list.map(function (data) {
-                                return (<li><a className="dropdown-item" href="#">{data.name}</a></li>)
+                                return (<li><a className="dropdown-item" onClick={handleClickElement} data-slug={data.slug} href="#">{data.name}</a></li>)
                             })}
 
                             <li><hr className="dropdown-divider" /></li>
