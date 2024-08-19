@@ -33,7 +33,7 @@ export default function Home() {
   return (
     <>
 
-      <Navbar />
+      <Navbar authentifier={authenticationRetour} />
 
       {!authenticationRetour ? <Main etatDeRetour={updateEtatDeAuthentification} /> :
 

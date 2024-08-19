@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-function Navbar() {
+import { useRouter } from "next/navigation";
+function Navbar({ authentifier }) {
 
     const [list, setList] = useState([]);
     const [email, setEmail] = useState("");
@@ -17,6 +18,18 @@ function Navbar() {
         axios.get(process.env.NEXT_PUBLIC_API_URI + "/getUserEmail", { withCredentials: true, }).then(res => {
             console.log(res);
             setEmail(res.data);
+        })
+            .catch(error => {
+                console.log("error");
+            })
+    }
+
+    const LogOutClick = () => {
+        axios.get(process.env.NEXT_PUBLIC_API_URI + "/logout", { withCredentials: true, }).then(res => {
+            const router = useRouter();
+
+            //this will reload the page without doing SSR
+            router.refresh();
         })
             .catch(error => {
                 console.log("error");
@@ -49,26 +62,36 @@ function Navbar() {
                 <div className="container-fluid">
 
                     <span className="navbar-brand mb-0 h1 text-white">Mcd Online</span>
-                    <a href="http://localhost:8080/oauth2/authorization/google">Authenticate</a>
 
-                    <div className="btn-group mx-5">
-                        <button type="button" className="btn customized-navbar dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Mon compte
-                        </button>
-                        <ul className="dropdown-menu">
-                            <li><a className="dropdown-item" href="#">{email}</a></li>
-                            <li><hr className="dropdown-divider" /></li>
-                            <li><h6 className="ms-5">Mes MCD</h6></li>
-                            {list.map(function (data) {
-                                return (<li><a className="dropdown-item" onClick={handleClickElement} data-slug={data.slug} href="#">{data.name}</a></li>)
-                            })}
 
-                            <li><hr className="dropdown-divider" /></li>
-                            <li><a className="dropdown-item" href="#">Se déconnecter</a></li>
-                        </ul>
-                    </div>
+
+                    {!authentifier ? "" :
+                        <>
+                            <span className="navbar-brand mb-0 h2 alert alert-danger">
+                                Note: Si Les lignes sont dispersés Glisser l'association ou l'entité cela les organisera
+                            </span>
+                            <div className="btn-group mx-5">
+
+                                <button type="button" className="btn customized-navbar dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Mon compte
+                                </button>
+                                <ul className="dropdown-menu">
+                                    <li><a className="dropdown-item" href="#">{email}</a></li>
+                                    <li><hr className="dropdown-divider" /></li>
+                                    <li><h6 className="ms-5">Mes MCD</h6></li>
+                                    {list.map(function (data) {
+                                        return (<li><a className="dropdown-item" onClick={handleClickElement} data-slug={data.slug} href="#">{data.name}</a></li>)
+                                    })}
+
+                                    <li><hr className="dropdown-divider" /></li>
+                                    <li><a className="dropdown-item" href="/" onClick={LogOutClick}>Se déconnecter</a></li>
+                                </ul>
+                            </div>
+                        </>
+                    }
                 </div>
-            </nav>
+
+            </nav >
         </>
     )
 }
