@@ -32,7 +32,7 @@ export default function Home() {
   }
   return (
     <>
-    <h1>New pipeline config</h1>
+    
 
       <Navbar authentifier={authenticationRetour} />
 
